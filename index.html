@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Elevation with Input and Marker</title>
+  </head>
+  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script> -->
+  <script src="https://www.google.com/jsapi"></script>
+  <script src="https://www.gstatic.com/charts/loader.js"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap"
+    rel="stylesheet"
+  />
+  <script
+    src="https://kit.fontawesome.com/cc800be774.js"
+    crossorigin="anonymous"
+  ></script>
+  <link rel="stylesheet" href="style.css" />
+  <body>
+    <div class="navbar">
+      <nav>
+        <div style="display: flex; justify-content: space-between;">
+          <h1>Link Budget Tool</h1>
+          <ul>
+            <li>Website</li>
+            <li>Products</li>
+            <li>Contact Us</li>
+          </ul></div>
+        
+      </nav>
+    </div>
+    <div>
+      <div class="overlay-extended">
+        <div class="sidebar-body">
+          <form action="">
+            <div class="sidebar-section">
+              <div class="sidebar-section-body">
+                <div class="input-grid">
+                  <div class="input-grid-col--9">
+                    <label for="searchA" class="label">Tower</label>
+                    <div class="towersearch">
+                      <input
+                        type="text"
+                        id="searchtowerA"
+                        autocomplete="off"
+                        class="input towerinput"
+                        placeholder="Tower A"
+                      />
+                      <img
+                        src="image/starting.png"
+                        class="pinIcon"
+                        alt=""
+                        onclick="addMarker()"
+                      />
+                    </div>
+                  </div>
+                  <div class="input-grid-col--3">
+                    <label for="aheight1" class="label">Height</label>
+                    <div class="towerheight">
+                      <input type="text" class="input" id="aheight1" value = "15"/>
+                      <span class="ng-binding">m</span>
+                    </div>
+                  </div>
+                  <div class="input-grid-col--9">
+                    <div class="towersearch">
+                      <input
+                        type="text"
+                        autocomplete="off"
+                        id="searchtowerB"
+                        class="input towerinput"
+                        placeholder="Tower B"
+                        onchange="inputMarker()"
+                        onblur="hopazimuth()"
+                      />
+                      <img
+                        src="image/ending.png"
+                        alt=""
+                        class="pinIcon"
+                        onclick="addMarker()"
+                      />
+                    </div>
+                  </div>
+                  <div class="input-grid-col--3">
+                    <div class="towerheight">
+                      <input
+                        type="text"
+                        id="aheight2"
+                        class="input"
+                        placeholder=""
+                        value="15"
+                      />
+                      <span class="ng-binding">m</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="input-grid" style="margin-top: 15px">
+                  <div class="input-grid-col--5">
+                    <label for="channelBandwidth" class="label"
+                      >Channel Bandwidth</label
+                    >
+                    <select
+                      name=""
+                      id="channelBandwidth"
+                      class="select"
+                      onchange="populatefreq()"
+                    >
+                      <option value="" hidden>Bandwidth</option>
+                      <option value="20" selected>20 MHz</option>
+                      <option value="40">40 MHz</option>
+                      <option value="80">80 MHz</option>
+                    </select>
+                  </div>
+                  <div class="input-grid-col--5">
+                    <label for="channelFrequency" class="label"
+                      >Channel Frequency</label
+                    >
+                    <select
+                      id="channelFrequency"
+                      class="select"
+                      onchange="fresneleirp()">
+                      <option value="5160" selected>5160</option>
+                      <option value="5180">5180</option>
+                      <option value="5120">5200</option>
+                      <option value="5220">5220</option>
+                      <option value="5240">5240</option>
+                      <option value="5735">5735</option>
+                      <option value="5755">5755</option>
+                      <option value="5775">5775</option>
+                      <option value="5795">5795</option>
+                      <option value="5815">5815</option>
+                      <option value="5835">5835</option>
+                      <option value="5855">5855</option>
+                      <!-- <option value="" hidden>Channel Frequency</option> -->
+                    </select>
+                  </div>
+                </div>
+                <div style="margin-top: 15px">
+                    <label for="radio" class="label">Radio</label>
+                    <select name="" id="radio" class="select" onchange="deviceinfo()">
+                      <optgroup label="Integrated Antenna">
+                        <option value="17">ion4l1_BTS</option>
+                        <option value="23">ion4l2</option>
+                        <option value="23">ion4l2_CPE</option>
+                        <option value="25" selected>ion4l3</option>
+                        <option value="25">ion4l3_CPE</option>
+                      </optgroup>
+                      <optgroup label="External Antenna">
+                        
+                        <option value="25">ion4le</option>
+                      </optgroup>
+                    </select>
+                  </div>
+                <div class="input-grid" style="margin-top: 15px">
+                  <label for="" class="label">Cable and other Losses</label>
+                  <input type="number" name="" id="cableLoss" value="1" class="input" />
+                </div>
+              </div>
+            </div>
+            <div class="sidebar-section align-center">
+              <div class="sidebar-section-body" style="padding: 30px">
+                <div class="btn-group">
+                  <button type="button" class="btn" id="reportbtn" onclick="reportMarker()" disabled>
+                    Installation Report
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="sidebar-section">
+              <div class="sidebar-section-wrapper">
+                <header class="sidebar-section-header">
+                  <label for="" class="sidebar-section-title"
+                    >Link summary</label
+                  >
+                  <a href="">
+                    <i class="fa-solid fa-arrows-rotate refresh"></i>
+                  </a>
+                </header>
+                <div class="sidebar-section-body">
+                  <table class="link-summary">
+                    <tbody>
+                      <tr>
+                        <th>line of sight</th>
+                        <td><span class="ng-binding" id="los"></span>
+                        <span>Yes/No</span></td>
+                        <th>fresnel radius</th>
+                        <td>
+                          <span class="ng-binding" id="fresnelRadius"></span>
+                          <span>m</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>rsl</th>
+                        <td>
+                            <span class="ng-binding" id="rsl"></span>
+                            <span>dBm</span>
+                        </td>
+                        <th>link distance</th>
+                        <td>
+                          <span class="ng-binding" id="linkDistance"></span>
+                          <span>Km</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>snr</th>
+                        <td>
+                            <span class="ng-binding" id="snr"></span>
+                            <span>dB</span>
+                        </td>
+                        <th>throughput</th>
+                        <td>
+                          <span class="ng-binding" id="throughput"></span>
+                          <span>Mbps</span>
+                        </td>
+                      </tr>
+                        <th>EIRP Max</th>
+                        <td>
+                          <span class="ng-binding" id="eirpMax"></span>
+                        </td>
+                        <th>link reliability rate</th>
+                        <td>
+                          <span class="ng-binding" id="linkAvailability"></span>
+                          <span>%</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div class="elevation-chart">
+                    <div
+                      id="elevation_profile"
+                      style="position: static; display: block"
+                    >
+                </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="map-container">
+        <div id="map3d" class="sidebar-section-body"></div>
+      </div>
+
+
+      <!-- LINK INSTALLATION REPORT -->
+      <!-- This below div is the pop up report which will generate after clicking on the installation report button -->
+      <div class="popup">
+        <div class="content">
+          <div class="header">
+            <h4 class="modal-title">
+              Installation Report
+              <!-- <button type="button" class="modal-control">
+                    <span>&times;</span>
+                </button> -->
+              <a href="" class="modal-control">
+                <i
+                  class="fa-solid fa-xmark"
+                  id="close-btn"
+                  aria-hidden="true"
+                ></i>
+              </a>
+              <a href="" type="button" class="modal-control">
+                <i class="fa-solid fa-print"></i>
+              </a>
+            </h4>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <!--  -->
+              <!-- CONTAINER HOLDING LINK SETTINGS -->
+              <!--  -->
+              <div class="report-holder col-sm-6 col-p-6" id="linksettings">
+                <div class="report-content well">
+                  <div class="heading">Link Settings</div>
+                  <table class="table table-condensed" id="tablelinksettings">
+                    <tbody>
+                      <tr>
+                        <td>Channel Bandwidth</td>
+                        <td>
+                            <span id="reportbandwidth"></span>
+                            <span>MHz</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Frequency</td>
+                        <td>
+                            <span id="reportfrequency"></span>
+                            <span>MHz</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Power 1</td>
+                        <td>
+                            <span id="txA"></span>
+                            <span>dBm</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Power 2</td>
+                        <td>
+                            <span id="txB"></span>
+                            <span>dBm</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Antenna Gain</td>
+                        <td>
+                            <span id="antGain"></span>
+                            <span>dBm</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Cable Loss</td>
+                        <td>
+                            <span id="reportloss"></span>
+                            <span></span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <!--  -->
+              <!-- CONTAINER HOLDING ELEVATION CHART  -->
+              <!--  -->
+              <div class="report-holder col-sm-6 col-p-6">
+                <div class="report-content well">
+                  <div class="heading">Elevation Profile</div>
+                  <div
+                      id="report_elevation_profile"
+                      style="position: static; display: block"
+                    ></div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <!--  -->
+              <!-- GOOGLE MAPS -->
+              <!--  -->
+              <div class="report-holder col-sm-3 col-p-6">
+                <div class="report-content well">
+                  <div class="heading">Link Topography</div>
+                  <div class="report-map-container">
+                    <div id="reportmap"></div>
+                  </div>
+                  
+                </div>
+              </div>
+              <!--  -->
+              <!-- CONTAINER HOLDING LINK STATISTIC -->
+              <!--  -->
+              <div class="report-holder col-sm-7 col-p-6">
+                <div class="report-content well">
+                  <div class="heading">Link Stats</div>
+                  <table class="table table-condensed">
+                    <tbody>
+                      <tr>
+                        <th>Link Distance</th>
+                        <td>
+                            <span id="reportlinkdistance"></span>
+                            <span>Km</span>
+                        </td>
+                        <th>Fresnel Radius</th>
+                        <td>
+                            <span id="reportfresradius"></span>
+                            <span>m</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>Azimuth Angle A</th>
+                        <td>
+                            <span id="azimuthA"></span>
+                            <span>deg</span>
+                        </td>
+                        <th>Azimuth Angle B</th>
+                        <td>
+                            <span id="azimuthB"></span>
+                            <span>deg</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>SNR</th>
+                        <td>
+                            <span id="reportsnr"></span>
+                            <span>dB</span>
+                        </td>
+                        <th>RSSI</th>
+                        <td>
+                            <span id="reportrsl"></span>
+                            <span>dBm</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>Modulation</th>
+                        <td>
+                            <span id="modulation"></span>
+                            <span></span>
+                        </td>
+                        <th>Link Rate</th>
+                        <td>
+                            <span id="linkRate"></span>
+                            <span></span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>Throughput</th>
+                        <td>
+                            <span id="reportthroughput"></span>
+                            <span>Mbps</span>
+                        </td>
+                        <th>MCS</th>
+                        <td>
+                            <span id="mcs"></span>
+                            <span></span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>Fade Margin</th>
+                        <td>
+                            <span id="fadeMargin"></span>
+                            <span>dB</span>
+                        </td>
+                        <th>Link Availability</th>
+                        <td>
+                            <span id="reportlinkAvailability"></span>
+                            <span>%</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="table">
+      <!-- TABLE 1 BANDWIDTH 20MHz -->
+      <table id="throughput20MHz" class="mcsTable" hidden>
+        <tr>
+          <th>Min</th>
+          <th>Max</th>
+          <th>MCS</th>
+          <th>Modulation</th>
+          <th>FEC</th>
+          <th>Link Rate</th>
+          <th>Throughput</th>
+        </tr>
+
+        <tr>
+          <td>3</td>
+          <td>6</td>
+          <td>0</td>
+          <td>BPSK</td>
+          <td>1/2</td>
+          <td>14.4</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>9</td>
+          <td>1</td>
+          <td>QPSK</td>
+          <td>1/2</td>
+          <td>28.9</td>
+          <td>20</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>13</td>
+          <td>2</td>
+          <td>QPSK</td>
+          <td>3/4</td>
+          <td>43.3</td>
+          <td>30</td>
+        </tr>
+        <tr>
+          <td>14</td>
+          <td>16</td>
+          <td>3</td>
+          <td>16-QAM</td>
+          <td>1/2</td>
+          <td>57.8</td>
+          <td>40</td>
+        </tr>
+        <tr>
+          <td>17</td>
+          <td>19</td>
+          <td>4</td>
+          <td>16-QAM</td>
+          <td>3/4</td>
+          <td>86.7</td>
+          <td>60</td>
+        </tr>
+        <tr>
+          <td>20</td>
+          <td>22</td>
+          <td>5</td>
+          <td>64-QAM</td>
+          <td>2/3</td>
+          <td>115.6</td>
+          <td>80</td>
+        </tr>
+        <tr>
+          <td>23</td>
+          <td>25</td>
+          <td>6</td>
+          <td>64-QAM</td>
+          <td>3/4</td>
+          <td>130</td>
+          <td>91</td>
+        </tr>
+        <tr>
+          <td>26</td>
+          <td>28</td>
+          <td>7</td>
+          <td>64-QAM</td>
+          <td>5/6</td>
+          <td>144.4</td>
+          <td>101</td>
+        </tr>
+        <tr>
+          <td>29</td>
+          <td>29</td>
+          <td>8</td>
+          <td>256-QAM</td>
+          <td>3/4</td>
+          <td>173.3</td>
+          <td>120</td>
+        </tr>
+        <tr>
+          <td>30</td>
+          <td>82</td>
+          <td>9</td>
+          <td>256-QAM</td>
+          <td>5/6</td>
+          <td>192</td>
+          <td>135</td>
+        </tr>
+      </table>
+
+      <!-- TABLE 2 BANDWIDTH 40MHz  -->
+
+      <table id="throughput40MHz" class="mcsTable" hidden>
+        <tr>
+          <th>Min</th>
+          <th>Max</th>
+          <th>MCS</th>
+          <th>Modulation</th>
+          <th>FEC</th>
+          <th>Link Rate</th>
+          <th>Throughput</th>
+        </tr>
+
+        <tr>
+          <td>3</td>
+          <td>5</td>
+          <td>0</td>
+          <td>BPSK</td>
+          <td>1/2</td>
+          <td>30</td>
+          <td>21</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>8</td>
+          <td>1</td>
+          <td>QPSK</td>
+          <td>1/2</td>
+          <td>60</td>
+          <td>42</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>12</td>
+          <td>2</td>
+          <td>QPSK</td>
+          <td>3/4</td>
+          <td>90</td>
+          <td>63</td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td>15</td>
+          <td>3</td>
+          <td>16-QAM</td>
+          <td>1/2</td>
+          <td>120</td>
+          <td>84</td>
+        </tr>
+        <tr>
+          <td>16</td>
+          <td>18</td>
+          <td>4</td>
+          <td>16-QAM</td>
+          <td>3/4</td>
+          <td>180</td>
+          <td>126</td>
+        </tr>
+        <tr>
+          <td>19</td>
+          <td>21</td>
+          <td>5</td>
+          <td>64-QAM</td>
+          <td>2/3</td>
+          <td>240</td>
+          <td>168</td>
+        </tr>
+        <tr>
+          <td>22</td>
+          <td>25</td>
+          <td>6</td>
+          <td>64-QAM</td>
+          <td>3/4</td>
+          <td>270</td>
+          <td>189</td>
+        </tr>
+        <tr>
+          <td>26</td>
+          <td>28</td>
+          <td>7</td>
+          <td>64-QAM</td>
+          <td>5/6</td>
+          <td>300</td>
+          <td>210</td>
+        </tr>
+        <tr>
+          <td>29</td>
+          <td>29</td>
+          <td>8</td>
+          <td>256-QAM</td>
+          <td>3/4</td>
+          <td>360</td>
+          <td>252</td>
+        </tr>
+        <tr>
+          <td>30</td>
+          <td>80</td>
+          <td>9</td>
+          <td>256-QAM</td>
+          <td>5/6</td>
+          <td>400</td>
+          <td>280</td>
+        </tr>
+      </table>
+
+      <table id="throughput80MHz" class="mcsTable" hidden>
+        <tr>
+          <th>Min</th>
+          <th>Max</th>
+          <th>MCS</th>
+          <th>Modulation</th>
+          <th>FEC</th>
+          <th>Link Rate</th>
+          <th>Throughput</th>
+        </tr>
+
+        <tr>
+          <td>6</td>
+          <td>9</td>
+          <td>0</td>
+          <td>BPSK</td>
+          <td>1/2</td>
+          <td>65</td>
+          <td>45</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>11</td>
+          <td>1</td>
+          <td>QPSK</td>
+          <td>1/2</td>
+          <td>130</td>
+          <td>91</td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td>14</td>
+          <td>2</td>
+          <td>QPSK</td>
+          <td>3/4</td>
+          <td>195</td>
+          <td>135</td>
+        </tr>
+        <tr>
+          <td>15</td>
+          <td>16</td>
+          <td>3</td>
+          <td>16-QAM</td>
+          <td>1/2</td>
+          <td>260</td>
+          <td>182</td>
+        </tr>
+        <tr>
+          <td>17</td>
+          <td>19</td>
+          <td>4</td>
+          <td>16-QAM</td>
+          <td>3/4</td>
+          <td>390</td>
+          <td>275</td>
+        </tr>
+        <tr>
+          <td>20</td>
+          <td>22</td>
+          <td>5</td>
+          <td>64-QAM</td>
+          <td>2/3</td>
+          <td>520</td>
+          <td>365</td>
+        </tr>
+        <tr>
+          <td>23</td>
+          <td>25</td>
+          <td>6</td>
+          <td>64-QAM</td>
+          <td>3/4</td>
+          <td>585</td>
+          <td>410</td>
+        </tr>
+        <tr>
+          <td>26</td>
+          <td>29</td>
+          <td>7</td>
+          <td>64-QAM</td>
+          <td>5/6</td>
+          <td>650</td>
+          <td>455</td>
+        </tr>
+        <tr>
+          <td>30</td>
+          <td>30</td>
+          <td>8</td>
+          <td>256-QAM</td>
+          <td>3/4</td>
+          <td>780</td>
+          <td>546</td>
+        </tr>
+        <tr>
+          <td>31</td>
+          <td>80</td>
+          <td>9</td>
+          <td>256-QAM</td>
+          <td>5/6</td>
+          <td>866.7</td>
+          <td>610</td>
+        </tr>
+      </table>
+
+      <!-- ------------------------------------------------------ -->
+      <!-- Table to refer the EIRP for different channel bandwidths -->
+      <!-- -------------------------------------------------------- -->
+
+      <!-- Channel Bandwidth - 20MHz -->
+      <table id="eirp20MHz" border="1" class="eirpTable" hidden>
+        <caption>
+          Channel Bandwidth - 20 MHz
+        </caption>
+        <tr>
+          <th>CF</th>
+          <th>Channel</th>
+          <th>EIRP</th>
+        </tr>
+        <tr>
+          <td>5160</td>
+          <td>34</td>
+          <td>53</td>
+        </tr>
+        <tr>
+          <td>5180</td>
+          <td>36</td>
+          <td>53</td>
+        </tr>
+        <tr>
+          <td>5200</td>
+          <td>40</td>
+          <td>53</td>
+        </tr>
+        <tr>
+          <td>5220</td>
+          <td>44</td>
+          <td>53</td>
+        </tr>
+        <tr>
+          <td>5240</td>
+          <td>48</td>
+          <td>53</td>
+        </tr>
+        <tr>
+          <td>5735</td>
+          <td>147</td>
+          <td>47</td>
+        </tr>
+        <tr>
+          <td>5755</td>
+          <td>151</td>
+          <td>47</td>
+        </tr>
+        <tr>
+          <td>5775</td>
+          <td>155</td>
+          <td>47</td>
+        </tr>
+        <tr>
+          <td>5795</td>
+          <td>159</td>
+          <td>47</td>
+        </tr>
+        <tr>
+          <td>5815</td>
+          <td>163</td>
+          <td>47</td>
+        </tr>
+        <tr>
+          <td>5835</td>
+          <td>168</td>
+          <td>47</td>
+        </tr>
+        <tr>
+          <td>5855</td>
+          <td>171</td>
+          <td>47</td>
+        </tr>
+      </table>
+
+      <!-- Table for channel Bandwidth - 40MHz -->
+      <table id="eirp40MHz" border="1" class="eirpTable" hidden>
+        <caption>
+          Channel Bandwidth - 40 MHz
+        </caption>
+        <tr>
+          <th>CF</th>
+          <th>Channel</th>
+          <th>EIRP</th>
+        </tr>
+        <tr>
+          <td>5170</td>
+          <td>36</td>
+          <td>53</td>
+        </tr>
+        <tr>
+          <td>5210</td>
+          <td>42</td>
+          <td>53</td>
+        </tr>
+        <tr>
+          <td>5745</td>
+          <td>149</td>
+          <td>47</td>
+        </tr>
+        <tr>
+          <td>5785</td>
+          <td>157</td>
+          <td>47</td>
+        </tr>
+        <tr>
+          <td>5825</td>
+          <td>165</td>
+          <td>47</td>
+        </tr>
+      </table>
+
+      <!-- Table for channel Bandwidth - 80MHz -->
+      <table id="eirp80MHz" border="1" class="eirpTable" hidden>
+        <caption>
+          Channel Bandwidth - 80MHz
+        </caption>
+        <tr>
+          <th>CF</th>
+          <th>Channel</th>
+          <th>EIRP</th>
+        </tr>
+        <tr>
+          <td>5190</td>
+          <td>42</td>
+          <td>53</td>
+        </tr>
+        <tr>
+          <td>5765</td>
+          <td>155</td>
+          <td>47</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- <script src="elevation.js"></script> -->
+    <script src="functionalities.js"></script>
+    <script src="marker input.js"></script>
+    <!-- <script src="https://maps.google.com/maps/api/js?sensor=false&callback=initMap"></script> -->
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBFf4mpz_yyO4VwiDBxITLVQjp8Zr_VlHc&callback=initMap"
+        defer
+      ></script>
+  </body>
+</html>
